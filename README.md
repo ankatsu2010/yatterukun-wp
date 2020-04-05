@@ -29,3 +29,11 @@ Yatterukun mobile app is also available for free on Google Play and App Store.
 3.That should do it.
 
 Let's go check it!
+
+# Author
+* Katsuya Ando
+* ANDOWS LLC
+* k.ando@andows.jp
+
+# License
+GNU General Public License v3.0
