@@ -1,0 +1,119 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Yatterukun v1.0.0\n"
+"Report-Msgid-Bugs-To: Katsuya Ando <k.ando@andows.jp>\n"
+"POT-Creation-Date: 2020-03-01 10:27+0900\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Katsuya Ando <k.ando@andows.jp>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Textdomain-Support: yesX-Generator: Poedit 1.6.4\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;esc_html_e;esc_html_x:1,2c;esc_html__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_attr__;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;"
+"_x:1,2c;_n:1,2;_n_noop:1,2;__ngettext:1,2;__ngettext_noop:1,2;_c,"
+"_nc:4c,1,2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: Yatterukun.php:98 setting.php:2
+msgid "Yatterukun Settings"
+msgstr "やってるくん設定"
+
+#: Yatterukun.php:99
+msgid "Yatterukun"
+msgstr "やってるくん"
+
+#: Yatterukun.php:130
+msgid "Settings Saved."
+msgstr "設定が保存されました。"
+
+#: setting.php:19
+msgid "Page slug"
+msgstr "スラッグ"
+
+#: setting.php:24
+msgid "Slug of the destination page to send POST request."
+msgstr "POSTアップロード受付ページのスラッグ"
+
+#: setting.php:30
+msgid "User name"
+msgstr "ユーザ名"
+
+#: setting.php:35
+msgid "\"username\" field of the POST data."
+msgstr " POSTフォームデータの\"username\"フィールドの値"
+
+#: setting.php:41
+msgid "Upload key"
+msgstr "アップロード用キー"
+
+#: setting.php:46
+msgid "\"uploadkey\" field of the POST data."
+msgstr " POSTフォームデータの\"uploadkey\"フィールドの値"
+
+#: setting.php:52
+msgid "Data name"
+msgstr "データ名"
+
+#: setting.php:57
+msgid "Data name of the multipart/form-fata, not a file name."
+msgstr "ファイル送信時の\"name\"の値です。\"filename\"ではありません。"
+
+#: setting.php:63
+msgid "Upload max file size"
+msgstr "アップロードファイルサイズの上限値"
+
+#: setting.php:68
+msgid "It should be less than the system's upload_max_filesize."
+msgstr "この値はシステムのupload_max_filesize以下である必要があります。"
+
+#: setting.php:76
+msgid "Allowed file types"
+msgstr "ファイル拡張子"
+
+#: setting.php:89
+msgid "Select allowed file types for POST upload."
+msgstr "POSTアップロードを受け付けるファイル拡張子を選択してください。"
+
+#: setting.php:102
+msgid "Information"
+msgstr "連絡先"
+
+#: setting.php:107
+msgid "Report Bug and Issues"
+msgstr "バグレポート送付先"
+
+#: setting.php:110
+msgid "Github Repository"
+msgstr "GitHubリポジトリ"
+
+#: setting.php:113
+msgid "Plugin Page in WP"
+msgstr "プラグインページ（WP）"
+
+#: setting.php:117
+msgid "Rate to this plugin"
+msgstr "プラグインに高評価をお願いします"
+
+#: setting.php:121
+msgid "Official Page"
+msgstr "オフィシャルページ"
+
+#: setting.php:124
+msgid "Donation appreciated!"
+msgstr "ドネイション歓迎です"
+
+#: setting.php:128
+msgid ""
+"To contribute to this plugin development please go <a href=\"https://github."
+"com/ankatsu2010/yatterukun-wp\" target=\"_blank\">plugin Github repository</"
+"a>."
+msgstr ""
+"メンテナンス・翻訳へのご協力は <a href=\"https://github.com/ankatsu2010/"
+"yatterukun-wp\" target=\"_blank\"> GitHub ページ</a>にて"

@@ -6,6 +6,8 @@ Description: Wait for POST request and automatically replace the image/video fil
 Version: 1.0.0
 Author: Katsuya Ando
 Author URI: https://www.andows.jp
+Text Domain: yatterukun
+Domain Path: /languages
 License: GPLv2 or later
 */
 

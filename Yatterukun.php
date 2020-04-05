@@ -1,9 +1,4 @@
 <?php
-/**
- *WordPress Yatterukun
- *@link https://github.com/ankatsu2010/yatterukun-wp
- *@author Katsuya Ando <ankatsu2010@ankatsu.com>
- */
 class Yatterukun {
 	const WP_SETTINGS_KEY = 'yatterukun_settings_key';
 	private static $_settings;
@@ -20,7 +15,13 @@ class Yatterukun {
 		
 		//add_action( 'send_headers', array( $this, 'add_header_nocache' ) );
 		add_filter('the_content', array( $this, 'img_cache_buster' ));
-		add_action('wp_footer', array( $this, 'theme_header_cache_buster' ) );
+		//add_action('wp_footer', array( $this, 'theme_header_cache_buster' ) );
+		
+		//add_filter( 'header_video_settings', array( $this, 'header_video_chachebuster' ) );
+		
+		
+		add_action( 'plugins_loaded', array( $this, 'yatterukun_load_plugin_textdomain' ) );
+		
 	}
 	/**
 	 *Prepare placehoder dummy file
@@ -45,7 +46,7 @@ class Yatterukun {
 	 			$attachment = array(
 					'guid'           => $wp_upload_url . 'yatterukun.jpg', 
 					'post_mime_type' => $filetype['type'],
-					'post_title'     => 'yatterukun',
+					'post_title'     => '',
 					'post_content'   => '',
 					'post_status'    => 'inherit'
 				);
@@ -72,7 +73,7 @@ class Yatterukun {
 	 			$attachment = array(
 					'guid'           => $wp_upload_url . 'yatterukun.mp4', 
 					'post_mime_type' => 'video/mp4',
-					'post_title'     => 'yatterukun',
+					'post_title'     => '',
 					'post_content'   => '',
 					'post_status'    => 'inherit'
 				);
@@ -109,18 +110,7 @@ class Yatterukun {
 			foreach ($fields as $field) {
                 if (array_key_exists($field, $_POST) && $_POST[$field]) {
                 	
-                	if ( $field == 'max_size' ) {
-                		$system_max = ini_get('upload_max_filesize');
-                		if ( $_POST[$field] > $system_max ) {
-                			static::$_settings[$field] = $system_max;
-                		}
-                		else {
-                			static::$_settings[$field] = $_POST[$field];
-                		}
-                	}
-                	else {
-                		static::$_settings[$field] = $_POST[$field];
-                	}
+                	static::$_settings[$field] = $_POST[$field];
                 }
             }
             update_option(self::WP_SETTINGS_KEY, static::$_settings);
@@ -174,13 +164,18 @@ class Yatterukun {
     function add_header_nocache() {
     	header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
     }
+    
     function img_cache_buster ( $content ) {
-    	$buster = '?x=' . rand();
-    	$pattern = '/\/yatterukun\/(yatterukun.*\.)(jpg|mp4)/';
+    	$buster = '?x=' . rand() . '"';
+    	//$pattern = '/\/yatterukun\/(yatterukun.*?\.)(jpg.*?"|mp4.*?")/';
+    	$pattern = '/\/yatterukun\/(yatterukun.*?\.)(jpg|mp4).*?"/';
+    	
+    	//$replacement = '/yatterukun/$1$2' . $buster . '"';
     	$replacement = '/yatterukun/$1$2' . $buster;
     	
     	return preg_replace($pattern, $replacement, $content);
     }
+    
     function theme_header_cache_buster() {
     	?>
     	<script type="text/javascript">
@@ -207,14 +202,24 @@ class Yatterukun {
     	<?php
     }
     
+    function header_video_chachebuster ( $settings ){
+    	$buster = '?x=' . rand();
+    	$editedURL = $settings['url'] . $buster;
+    	$settings['url'] = $editedURL;
+    	return $settings;
+    }
+    
     
 	/**
 	 *
 	 */
 	 function template_loader( $template ) {
 		
-		if ( is_page( 'yatterukun' )) {
-			$template_dir = plugin_dir_path( __FILE__ ) . 'templates/';
+		$template_dir = plugin_dir_path( __FILE__ ) . 'templates/';
+		
+		$page_slug = self::getOption( 'page_slug' );
+		
+		if ( is_page( $page_slug ) ) {
 			$file_name = 'yatterukun-page.php';
 			return $template_dir . $file_name;
 		}
@@ -222,7 +227,9 @@ class Yatterukun {
 		return $template;
 	}
 	
-	
+	function yatterukun_load_plugin_textdomain() {
+	    load_plugin_textdomain( 'yatterukun', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+	}
 	
 	
 	

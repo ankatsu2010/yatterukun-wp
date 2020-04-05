@@ -12,16 +12,17 @@ $file_types = Yatterukun::getOption( 'file_types' );
 $_yatterukun_width = 2000;
 $_yatterukun_height = 1200;
 
-
 if ( is_page( $page_slug ) ) {
 	if ( ! $_SERVER['REQUEST_METHOD'] == 'POST') {
-		http_response_code( 404 );
+		global $wp_query;
+    	$wp_query->set_404();
 		status_header( 404 );
-		include_once('404.html');
-		
+		http_response_code(404);
+    	nocache_headers();
+    	require get_404_template();
+    	exit;
 	}
-	
-	if ( isset($_POST['username']) && $user_name == $_POST['username'] 
+	else if ( isset($_POST['username']) && $user_name == $_POST['username'] 
 		&& isset($_POST['uploadkey']) && $upload_key == $_POST['uploadkey'] ) {
 		
 		echo 'Welcome ' . $user_name . '!' . PHP_EOL;
@@ -178,6 +179,21 @@ if ( is_page( $page_slug ) ) {
 						}
 						move_uploaded_file( $_FILES[ $data_name ]['tmp_name'], $dst_file );
 						
+						//update twentyseventeen header
+						/*
+						$buster = '?x=' . rand();
+						$wp_upload_url = site_url( '/uploads/yatterukun/', 'https' );
+						$image_url = $wp_upload_url . 'yatterukun.mp4' . $buster;
+						global $wpdb;
+						$wpdb->query(
+							"
+							UPDATE $wpdb->posts 
+							SET guid = $image_url
+							WHERE guid LIKE '%yatterukun.mp4%' 
+							"
+						);
+						*/
+						
 						
 						echo 'Operation completed !' . PHP_EOL;
 						
@@ -235,8 +251,12 @@ if ( is_page( $page_slug ) ) {
 		
 	}
 	else {
-		http_response_code(404);
+		global $wp_query;
+    	$wp_query->set_404();
 		status_header( 404 );
-		include_once('404.html');
+		http_response_code(404);
+    	nocache_headers();
+    	require get_404_template();
+    	exit;
 	}
 }

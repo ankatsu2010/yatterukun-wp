@@ -117,11 +117,14 @@
                                         <?php _e('Rate to this plugin', 'yatterukun'); ?>
                                     </a>
                                 </li>
+                                <li class="dashicons-before dashicons-admin-plugins" style="color: #82878c">
+                                    <a href="https://github.com/ankatsu2010/twentyseventeen-child-yatterukun" style="text-decoration: none" target="_blank"><?php _e('Child Theme for TwentySeventeen', 'yatterukun'); ?></a>
+                                </li>
                                 <li class="dashicons-before dashicons-admin-links" style="color: #82878c">
                                     <a href="https://www.andows.jp/yatterukun-wp" style="text-decoration: none" target="_blank"><?php _e('Official Page', 'yatterukun'); ?></a>
                                 </li>
                                 <li class="dashicons-before dashicons-heart" style="color: #82878c">
-                                    <a href="https://www.andows.jp/donation" style="text-decoration: none" target="_blank"><?php _e('Donation appreciated!', 'yatterukun'); ?></a>
+                                    <a href="https://www.paypal.me/yatterukun" style="text-decoration: none" target="_blank"><?php _e('Donation appreciated!', 'yatterukun'); ?></a>
                                 </li>
                             </ul>
                             <hr>
