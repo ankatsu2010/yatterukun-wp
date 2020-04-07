@@ -21,7 +21,7 @@ class Yatterukun {
 		
 		
 		add_action( 'plugins_loaded', array( $this, 'yatterukun_load_plugin_textdomain' ) );
-		
+		//add_action('after_setup_theme', 'create_yatterukun_pages');
 	}
 	/**
 	 *Prepare placehoder dummy file
@@ -81,11 +81,11 @@ class Yatterukun {
 	 			require_once( ABSPATH . 'wp-admin/includes/image.php' );
 	 			$attach_data = wp_generate_attachment_metadata( $attach_id, $dst_file );
 				wp_update_attachment_metadata( $attach_id, $attach_data );
-	 			
-	 			
-	 			
 	 		}
 	 	}
+	 	//
+	 	self::create_yatterukun_pages();
+	 	
 	 }
 	 
 	/**
@@ -115,6 +115,8 @@ class Yatterukun {
             }
             update_option(self::WP_SETTINGS_KEY, static::$_settings);
             $message = __('Settings Saved.', 'yatterukun');
+            //
+	 		self::create_yatterukun_pages();
 		}
 		include_once( 'setting.php' );
 	}
@@ -231,6 +233,27 @@ class Yatterukun {
 	    load_plugin_textdomain( 'yatterukun', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
 	}
 	
-	
+   /**
+	*
+	*/
+	function create_yatterukun_pages() {
+	  $page_slug = self::getOption( 'page_slug' );
+	  $pages = array(
+	      $page_slug   => 'Yatterukun upload page'
+	  );
+	  foreach ($pages as $slug => $title) {
+	    if ( get_page_by_path($slug) === null) {
+	      wp_insert_post(
+	        array(
+	          'post_title'   => $title,
+	          'post_name'    => $slug,
+	          'post_status'  => 'publish',
+	          'post_type'    => 'page',
+	          'post_content' => '',
+	        )
+	      );
+	    }
+	  }
+	}
 	
 }

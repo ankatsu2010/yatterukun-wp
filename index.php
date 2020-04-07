@@ -25,7 +25,7 @@ function uninstall_yatterukun() {
 	
 	//delete_option ( self::WP_SETTINGS_KEY );
 	
-	$wp_upload_url = site_url( '/uploads/yatterukun/', 'https' );
+	$wp_upload_url = site_url( '/uploads/yatterukun/' );
 	global $wpdb;
 	$attachment = $wpdb->get_col($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid LIKE '%%%s%%';", 'yatterukun' ));
 	$force_delete = true;
@@ -34,9 +34,11 @@ function uninstall_yatterukun() {
 	}
 	$dst_dir = ABSPATH .'wp-content/uploads/yatterukun';
 	delete_files($dst_dir);
+	//delete_yatterukun_page();
 }
+
 /* 
- * php delete function that deals with directories recursively
+ * 
  */
 function delete_files($target) {
     if(is_dir($target)){
@@ -47,6 +49,17 @@ function delete_files($target) {
         rmdir( $target );
     } elseif(is_file($target)) {
         unlink( $target );  
+    }
+}
+
+/* 
+ * 
+ */
+function delete_yatterukun_page() {
+    $yatterukun_slug = Yatterukun::getOption('page_slug');
+    if ( $page = get_page_by_path( $yatterukun_slug ) ) {
+    	$page_id = $page->ID;
+    	wp_delete_post( $page_id, true ); 
     }
 }
 

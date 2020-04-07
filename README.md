@@ -36,4 +36,4 @@ Let's go check it!
 * k.ando@andows.jp
 
 # License
-GNU General Public License v3.0
+GNU General Public License v2 or later
