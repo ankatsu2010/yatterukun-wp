@@ -1,8 +1,12 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 class Yatterukun {
 	const WP_SETTINGS_KEY = 'yatterukun_settings_key';
 	private static $_settings;
 	private static $_file_extensions = array('jpg', 'mp4', 'mov');
+	private static $_default_max_upload_size = '2'; // 2 MB
+	private static $_limit_max_upload_size = '128'; // 128 MB
 	/**
 	 *Constructor
 	 */
@@ -13,25 +17,23 @@ class Yatterukun {
 		if (function_exists( 'register_activation_hook' ))
 			register_activation_hook( __DIR__.'/index.php', array ( $this, 'init_yatterukun_file' ) );
 		
-		//add_action( 'send_headers', array( $this, 'add_header_nocache' ) );
 		add_filter('the_content', array( $this, 'img_cache_buster' ));
-		//add_action('wp_footer', array( $this, 'theme_header_cache_buster' ) );
-		
-		//add_filter( 'header_video_settings', array( $this, 'header_video_chachebuster' ) );
-		
-		
 		add_action( 'plugins_loaded', array( $this, 'yatterukun_load_plugin_textdomain' ) );
-		//add_action('after_setup_theme', 'create_yatterukun_pages');
 	}
 	/**
 	 *Prepare placehoder dummy file
 	 */
 	function init_yatterukun_file(){
+		
+		if ( wp_upload_dir() ['error'] ) {
+			return;
+		}
+		
 		/*
 		 * jpg place holder file
 		 */
 	 	$src_file = plugin_dir_path( __FILE__ ) . 'images/yatterukun.jpg';
-	 	$dst_dir = ABSPATH .'wp-content/uploads/yatterukun';
+	 	$dst_dir = wp_upload_dir() ['basedir'] .'/yatterukun';
 	 	$dst_file = $dst_dir .'/yatterukun.jpg';
 	 	
 	 	if ( ! file_exists ( $dst_dir) ) {
@@ -61,7 +63,7 @@ class Yatterukun {
 		 * mp4 place holder file
 		 */
 	 	$src_file = plugin_dir_path( __FILE__ ) . 'images/yatterukun.mp4';
-	 	$dst_dir = ABSPATH .'wp-content/uploads/yatterukun';
+	 	$dst_dir = wp_upload_dir() ['basedir'] .'/yatterukun';
 	 	$dst_file = $dst_dir .'/yatterukun.mp4';
 	 	$buster = '?x=' . rand();
 	 	
@@ -69,7 +71,7 @@ class Yatterukun {
 	 		if ( copy ( $src_file, $dst_file ) ) {
 	 			
 	 			$filetype = wp_check_filetype( basename( $dst_file ), null );
-	 			$wp_upload_url = site_url( '/uploads/yatterukun/', 'https' );
+	 			$wp_upload_url = wp_upload_dir() ['baseurl'] . '/yatterukun/';
 	 			$attachment = array(
 					'guid'           => $wp_upload_url . 'yatterukun.mp4', 
 					'post_mime_type' => 'video/mp4',
@@ -108,9 +110,41 @@ class Yatterukun {
 			check_admin_referer('yatterukun_settings_nonce');
 			$fields = array('page_slug', 'user_name', 'upload_key', 'data_name', 'max_size', 'file_types');
 			foreach ($fields as $field) {
-                if (array_key_exists($field, $_POST) && $_POST[$field]) {
+			
+                if ( array_key_exists( $field, $_POST ) && $_POST[$field] ) {
                 	
-                	static::$_settings[$field] = $_POST[$field];
+                	if ( 'page_slug' == $field || 'upload_key' == $field || 'data_name' == $field ) {
+                		
+                		static::$_settings[$field] = sanitize_text_field ( $_POST[$field] );
+                	}
+                	else if ( 'user_name' == $field ) {
+                	
+                		static::$_settings[$field] = sanitize_user ( $_POST[$field] );
+                	}
+                	else if ( 'max_size' == $field ) {
+                		
+                		$max_size_val = $_POST[$field];
+                		if ( is_numeric( $max_size_val ) ) {
+                			
+                			$max_size_val = intval( $max_size_val );
+                			if ( $max_size_val > 0 && $max_size_val <= intval( $_limit_max_upload_size ) ) {
+                			
+                				static::$_settings[$field] = $_POST[$field];
+                			}
+                			else{
+                			
+                				$max_size_val = static::$_default_max_upload_size;
+                			}
+                		}
+                		else {
+                		
+                			$max_size_val = static::$_default_max_upload_size;
+                		}
+                	}
+                	else if ( 'file_types' == $field ) {
+                	
+                		static::$_settings[$field] = sanitize_user ( $_POST[$field] );
+                	}
                 }
             }
             update_option(self::WP_SETTINGS_KEY, static::$_settings);
@@ -140,7 +174,7 @@ class Yatterukun {
             'user_name' => $default_user,
             'upload_key' => $upload_key,
             'data_name' => 'yatterukun_data',
-            'max_size' => 2,
+            'max_size' => static::$_default_max_upload_size,
             'file_types' => static::$_file_extensions,
         );
         
@@ -160,55 +194,12 @@ class Yatterukun {
         return $options[$key];
     }
     
-    /**
-     * Browser cache buster
-     */
-    function add_header_nocache() {
-    	header( 'Cache-Control: no-cache, must-revalidate, max-age=0' );
-    }
     
     function img_cache_buster ( $content ) {
     	$buster = '?x=' . rand() . '"';
-    	//$pattern = '/\/yatterukun\/(yatterukun.*?\.)(jpg.*?"|mp4.*?")/';
     	$pattern = '/\/yatterukun\/(yatterukun.*?\.)(jpg|mp4).*?"/';
-    	
-    	//$replacement = '/yatterukun/$1$2' . $buster . '"';
     	$replacement = '/yatterukun/$1$2' . $buster;
-    	
     	return preg_replace($pattern, $replacement, $content);
-    }
-    
-    function theme_header_cache_buster() {
-    	?>
-    	<script type="text/javascript">
-    	var headerElem = document.getElementsByTagName( 'header' );
-    	if( headerElem.length > 0 ){
-    		//headerElem[0].style.display = 'none';
-    		headerElem[0].style.visibility = 'hidden';
-    	}
-    	
-    	window.onload = function() {
-	    	var buster = '?x=' + Math.floor( Math.random() * 1000000 );
-	    	//var headerElem = document.getElementsByTagName( 'header' );
-	    	//console.log( headerElem.length );
-	    	if( headerElem.length > 0 ){
-	    		var originStr = headerElem[0].innerHTML;
-	    		var newStr = originStr.replace( 'yatterukun.mp4"', 'yatterukun.mp4' + buster + '"');
-	    		//console.log( newStr );
-	    		headerElem[0].innerHTML = newStr;
-	    		//headerElem[0].style.display = 'block';
-	    		headerElem[0].style.visibility = 'visible';
-	    	}
-    	}
-    	</script>
-    	<?php
-    }
-    
-    function header_video_chachebuster ( $settings ){
-    	$buster = '?x=' . rand();
-    	$editedURL = $settings['url'] . $buster;
-    	$settings['url'] = $editedURL;
-    	return $settings;
     }
     
     
@@ -218,7 +209,6 @@ class Yatterukun {
 	 function template_loader( $template ) {
 		
 		$template_dir = plugin_dir_path( __FILE__ ) . 'templates/';
-		
 		$page_slug = self::getOption( 'page_slug' );
 		
 		if ( is_page( $page_slug ) ) {

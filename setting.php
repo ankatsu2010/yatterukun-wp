@@ -1,3 +1,4 @@
+<?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 <div class="wrap">
     <h2><?php _e('Yatterukun Settings', 'yatterukun'); ?></h2>
 
