@@ -156,12 +156,9 @@ class Yatterukun {
                 			static::$_settings[$field] = $tempArr;
                 		}
                 		else {
+                		
                 			static::$_settings[$field] = static::$_file_extensions;
                 		}
-                		
-                		//static::$_settings[$field] = $_POST[$field];
-                		//static::$_settings[$field] = sanitize_text_field ( $_POST[$field] );
-                		
                 	}
                 }
             }
