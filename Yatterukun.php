@@ -5,8 +5,8 @@ class Yatterukun {
 	const WP_SETTINGS_KEY = 'yatterukun_settings_key';
 	private static $_settings;
 	private static $_file_extensions = array('jpg', 'mp4', 'mov');
-	private static $_default_max_upload_size = '2'; // 2 MB
-	private static $_limit_max_upload_size = '128'; // 128 MB
+	private static $_default_max_upload_size = 2; // 2 MB
+	private static $_limit_max_upload_size = 128; // 128 MB
 	/**
 	 *Constructor
 	 */
@@ -123,13 +123,13 @@ class Yatterukun {
                 	}
                 	else if ( 'max_size' == $field ) {
                 		
-                		$max_size_val = sanitize_text_field ( $_POST[$field] );
+                		$max_size_val = sanitize_text_field ( strval( $_POST[$field] ) );
                 		if ( is_numeric( $max_size_val ) ) {
                 			
                 			$max_size_val = intval( $max_size_val );
-                			if ( $max_size_val > 0 && $max_size_val <= intval( $_limit_max_upload_size ) ) {
+                			if ( $max_size_val > 0 && $max_size_val <= static::$_limit_max_upload_size ) {
                 			
-                				static::$_settings[$field] = strval( $max_size_val );
+                				static::$_settings[$field] = $max_size_val;
                 			}
                 			else{
                 			
@@ -143,7 +143,25 @@ class Yatterukun {
                 	}
                 	else if ( 'file_types' == $field ) {
                 	
-                		static::$_settings[$field] = sanitize_user ( $_POST[$field] );
+                		if ( is_array( $_POST[$field] ) ) {
+                			
+                			$tempArr = array();
+                			foreach ( static::$_file_extensions as $fileExtension) {
+	                			foreach ( $_POST[$field] as $fileType) {
+		                			if ( $fileExtension == $fileType ) {
+		                				array_push( $tempArr, $fileExtension );
+		                			}
+		                		}
+	                		}
+                			static::$_settings[$field] = $tempArr;
+                		}
+                		else {
+                			static::$_settings[$field] = static::$_file_extensions;
+                		}
+                		
+                		//static::$_settings[$field] = $_POST[$field];
+                		//static::$_settings[$field] = sanitize_text_field ( $_POST[$field] );
+                		
                 	}
                 }
             }
