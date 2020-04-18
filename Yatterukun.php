@@ -123,13 +123,13 @@ class Yatterukun {
                 	}
                 	else if ( 'max_size' == $field ) {
                 		
-                		$max_size_val = $_POST[$field];
+                		$max_size_val = sanitize_text_field ( $_POST[$field] );
                 		if ( is_numeric( $max_size_val ) ) {
                 			
                 			$max_size_val = intval( $max_size_val );
                 			if ( $max_size_val > 0 && $max_size_val <= intval( $_limit_max_upload_size ) ) {
                 			
-                				static::$_settings[$field] = $_POST[$field];
+                				static::$_settings[$field] = strval( $max_size_val );
                 			}
                 			else{
                 			
